@@ -11,12 +11,23 @@ Collection of [crossplane](https://crossplane.io) labs.
 
 ## Setup
 
-This will create a local `kind` cluster named (`kind-xp`) and configure it with minimal GCP configuration (service account: `crossplane-sa`)
+This will create a local `kind` cluster named (`kind-xp`) and configure it with minimal GCP configuration (service account: `crossplane-sa`).
 
 ```shell
-./setup
+bin/setup
 ```
 
+## Demo
+
+TODO
+
+## Cleanup
+
+This will delete the GCP service account (`crossplane-sa`), and delete local kind cluster (`kind-xp`) that were created during setup.
+
+```shell
+bin/cleanup
+```
 
 ## Disclaimer
 
