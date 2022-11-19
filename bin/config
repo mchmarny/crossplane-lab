@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# validation 
+gcloud=$(which gcloud)   || ( echo "gcloud not found" && exit 1 )
+
+if [[ -z "${PROJECT_ID}" ]]; then
+  echo "PROJECT_ID not set, 'export PROJECT_ID=YOUR-PROJECT'."
+  exit 1
+fi;
+
+ACCOUNT=$(gcloud auth list --filter=status:ACTIVE --format="value(account)")
+if [[ -z "${ACCOUNT}" ]]; then
+  echo "Run 'gcloud auth login' to authenticate on GCP before running this script."
+  exit 1
+fi;
+
+if [[ -z "${REGION}" ]]; then
+  export REGION="us-west1"
+fi;
+
+# derived vars 
+export PROJECT_NUMBER="$(gcloud projects describe "${PROJECT_ID}" --format='value(projectNumber)')"
+export XP_SA_NAME="crossplane-sa"
+export XP_SA_EMAIL="${XP_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
+export REGISTRY="${REGION}-docker.pkg.dev/${PROJECT_ID}/crossplane-demo"
+
+# Print variables
+cat << EOF
+
+Configuration:
+  PROJECT:  ${PROJECT_ID} (${PROJECT_NUMBER})
+  REGION:   ${REGION}
+  ACCOUNT:  ${XP_SA_EMAIL}
+  REGISTRY: ${REGISTRY}
+EOF

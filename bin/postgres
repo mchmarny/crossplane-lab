@@ -1,0 +1,36 @@
+#!/bin/bash
+
+DIR="$(dirname "$0")"
+. "${DIR}/config"
+
+set -o errexit
+set -o pipefail
+
+# enable cloud API
+gcloud services enable "sqladmin.googleapis.com" --project $PROJECT_ID
+
+# grant access to cloud API
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --role="roles/cloudsql.admin" \
+  --member "serviceAccount:$XP_SA_EMAIL"
+
+# create configuration
+echo "apiVersion: database.example.org/v1alpha1
+kind: PostgreSQLInstance
+metadata:
+  name: postgres
+  namespace: default
+spec:
+  parameters:
+    storageGB: 20
+  compositionSelector:
+    matchLabels:
+      provider: gcp
+  writeConnectionSecretToRef:
+    name: db-conn" | kubectl apply -f -
+
+# build config
+kubectl crossplane build configuration
+
+# push to reg
+kubectl crossplane push configuration ${REGISTRY}/getting-started-with-gcp:v1.10.1

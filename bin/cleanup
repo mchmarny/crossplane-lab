@@ -1,0 +1,14 @@
+#!/bin/bash
+
+DIR="$(dirname "$0")"
+. "${DIR}/config"
+
+set -o errexit
+set -o pipefail
+
+# delete service account 
+gcloud iam service-accounts delete $XP_SA_EMAIL --project $PROJECT_ID
+
+# kind cluster
+kind delete cluster --name xp
+

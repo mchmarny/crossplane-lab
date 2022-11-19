@@ -8,10 +8,6 @@ tmp
 # Coverage
 *.out
 
-# Binaries
-bin
-dist
-
 # Keys 
 *.pem
 
